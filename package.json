@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "test": "jest && exit 1",
+    "test:runInBand": "jest --runInBand",
     "test:watch": "jest --watch"
   },
   "dependencies": {},
