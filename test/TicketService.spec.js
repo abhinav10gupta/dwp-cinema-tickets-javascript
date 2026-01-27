@@ -29,7 +29,7 @@ describe('TicketService - basic happy journey path', () => {
 
     test('1st Case : 1 Adult pay £25 and reserves 1 seat', () => {
         // Act
-        service.purchaseTicket(1, new TicketTypeRequest('ADULT', 1));
+        service.purchaseTickets(1, new TicketTypeRequest('ADULT', 1));
 
         //Assert 
         expect(paymentSpy).toHaveBeenCalledTimes(1);
