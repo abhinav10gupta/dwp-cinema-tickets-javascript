@@ -16,8 +16,37 @@ class TicketService {
   }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    // throws InvalidPurchaseException
-    throw new InvalidPurchaseException('Not implemented yet');
+
+    if(!Number.isInteger(accountId) || accountId <= 0){
+      throw new InvalidPurchaseException('Invalid accountId. Must be a positive integer.');
+    }
+
+    if(ticketTypeRequests.length === 1 && Array.isArray(ticketTypeRequests[0])){
+      ticketTypeRequests = ticketTypeRequests[0];
+    }
+    
+    const totals = { INFANT: 0, CHILD: 0, ADULT: 0}
+
+    for (const req of ticketTypeRequests) {
+      if ( !req || typeof req.getTicketType !== 'function' || typeof req.getNoOfTickets !== 'function') {
+        throw new InvalidPurchaseException('Invalid ticket request.');
+      }
+      const type = String(req.getTicketType()).toUpperCase();
+      const qty = req.getNoOfTickets();
+
+      if(!['INFANT', 'CHILD', 'ADULT'].includes(type)) {
+        throw new InvalidPurchaseException('Unknown ticket type: ',(type));
+      }
+
+      totals[type] += qty;
+    }
+
+    const totalAmount = totals.ADULT * 25 + totals.CHILD * 15; // Infants are free
+    const totalSeats = totals.ADULT + totals.CHILD; // No seat allocated to infants
+    console.log("accountId ---> ", accountId);
+
+    this.paymentService.makePayment(accountId, totalAmount);
+    this.seatService.reserveSeat(accountId, totalSeats);
   }
 }
 

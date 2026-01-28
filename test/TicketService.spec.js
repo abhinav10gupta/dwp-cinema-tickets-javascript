@@ -35,6 +35,18 @@ describe('TicketService - basic happy journey path', () => {
         expect(paymentSpy).toHaveBeenCalledTimes(1);
         expect(paymentSpy).toHaveBeenCalledWith(1, 25);
         expect(seatSpy).toHaveBeenCalledTimes(1);
-        expect(seatSpy).toHaveBeenCalledTimes(1,1);
+        expect(seatSpy).toHaveBeenCalledWith(1,1);
+    });
+
+    test('2 adults, 1 Child, 1 Infant -> pay £65 and reserves 3 seat', () => {
+        service.purchaseTickets(
+            123,
+            new TicketTypeRequest('ADULT', 2),
+            new TicketTypeRequest('CHILD', 1),
+            new TicketTypeRequest('INFANT', 1)
+        );
+
+        expect(paymentSpy).toHaveBeenCalledWith(123, 65);
+        expect(seatSpy).toHaveBeenCalledWith(123, 3);
     });
 })
