@@ -43,7 +43,16 @@ class TicketService {
 
     const totalAmount = totals.ADULT * 25 + totals.CHILD * 15; // Infants are free
     const totalSeats = totals.ADULT + totals.CHILD; // No seat allocated to infants
-    console.log("accountId ---> ", accountId);
+    const totalTickets = totals.ADULT + totals.CHILD + totals.INFANT;
+    
+    if ( totalTickets === 0 ) {
+      throw new InvalidPurchaseException('Total tickets must be atleast 1');
+    }
+
+    if(( totals.CHILD > 0 || totals.INFANT > 0) && totals.ADULT === 0){
+      throw new InvalidPurchaseException('Child/Infant ticket requires atleast one Adult.');
+    }
+
 
     this.paymentService.makePayment(accountId, totalAmount);
     this.seatService.reserveSeat(accountId, totalSeats);

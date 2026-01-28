@@ -49,4 +49,29 @@ describe('TicketService - basic happy journey path', () => {
         expect(paymentSpy).toHaveBeenCalledWith(123, 65);
         expect(seatSpy).toHaveBeenCalledWith(123, 3);
     });
+
+    test('Child without Adult -> throws InvalidPurchaseException', () => {
+        expect(() => {
+            service.purchaseTickets(
+                123,
+                new TicketTypeRequest('CHILD', 1))
+                    .toThrow(InvalidPurchaseException);
+
+            expect(paymentSpy).not.toHaveBeenCalled();
+            expect(seatSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    test('Infant without Adult -> throws InvalidPurchaseException', () => {
+        expect(() => {
+            service.purchaseTickets(
+                123,
+                new TicketTypeRequest('INFANT', 2))
+                    .toThrow(InvalidPurchaseException);
+    
+            expect(paymentSpy).not.toHaveBeenCalled();
+            expect(seatSpy).not.toHaveBeenCalled();
+        });   
+    });
+
 })
