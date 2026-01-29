@@ -18,6 +18,9 @@ class TicketTypeRequest {
 
     this.#type = type;
     this.#noOfTickets = noOfTickets;
+
+    // Make this instance fully immutable
+    Object.freeze(this);
   }
 
   getNoOfTickets() {

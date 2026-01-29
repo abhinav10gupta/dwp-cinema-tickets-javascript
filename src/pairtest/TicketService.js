@@ -27,24 +27,24 @@ class TicketService {
     
     const totals = { INFANT: 0, CHILD: 0, ADULT: 0}
     const MAX_TICKETS = CONSTANTS.MAX_TICKETS;
-
+   
     for (const req of ticketTypeRequests) {
       if ( !req || typeof req.getTicketType !== 'function' || typeof req.getNoOfTickets !== 'function') {
         throw new InvalidPurchaseException('Invalid ticket request.');
       }
       const type = String(req.getTicketType()).toUpperCase();
       const qty = req.getNoOfTickets();
+      if(!Number.isInteger(qty) || qty < 0 ){
+        throw new InvalidPurchaseException('Invalid number of tickets. Must be a positive integer.');
+      }
 
       if(!['INFANT', 'CHILD', 'ADULT'].includes(type)) {
-        throw new InvalidPurchaseException('Unknown ticket type: ',(type));
+        throw new InvalidPurchaseException(`Unknown ticket type: ${type}.`);
       }
 
       totals[type] += qty;
     }
 
-    if(!Number.isInteger(totals.ADULT) || totals.ADULT <= 0 ){
-      throw new InvalidPurchaseException('Invalid QTY. Must be a positive integer.');
-    }
 
     const totalAmount = totals.ADULT * PRICES.ADULT + totals.CHILD * PRICES.CHILD; // Infants are free
     const totalSeats = totals.ADULT + totals.CHILD; // No seat allocated to infants
@@ -68,3 +68,4 @@ class TicketService {
 }
 
 module.exports = TicketService;
+ 
