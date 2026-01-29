@@ -4,12 +4,17 @@ const SeatReservationService = require('../thirdparty/seatbooking/SeatReservatio
 const { CONSTANTS, PRICES } = require('./config/cinemaRules.js');
 
 class TicketService {
-  constructor() {
+    /**
+   * Should only have private methods other than the one below.
+   */
+
+  // To keep interface intact - No DI in constructor 
+
+  constructor(){
     this.paymentService = new TicketPaymentService();
     this.seatService = new SeatReservationService();
   }
 
-  // ✅ Only public method
   purchaseTickets(accountId, ...ticketTypeRequests) {
     this.#validateAccountId(accountId);
 
@@ -24,8 +29,6 @@ class TicketService {
     this.paymentService.makePayment(accountId, totalAmount);
     this.seatService.reserveSeat(accountId, totalSeats);
   }
-
-  // ---------------- PRIVATE METHODS ----------------
 
   #validateAccountId(accountId) {
     if (!Number.isInteger(accountId) || accountId <= 0) {
