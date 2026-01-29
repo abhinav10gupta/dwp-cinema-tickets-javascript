@@ -2,6 +2,7 @@
 const InvalidPurchaseException = require('./lib/InvalidPurchaseException.js');
 const TicketPaymentService = require('../thirdparty/paymentgateway/TicketPaymentService.js');
 const SeatReservationService = require('../thirdparty/seatbooking/SeatReservationService.js');
+const {CONSTANTS, PRICES} = require('./config/cinemaRules.js');
 
 class TicketService {
   /**
@@ -25,7 +26,7 @@ class TicketService {
     }
     
     const totals = { INFANT: 0, CHILD: 0, ADULT: 0}
-    const MAX_TICKETS = 25;
+    const MAX_TICKETS = CONSTANTS.MAX_TICKETS;
 
     for (const req of ticketTypeRequests) {
       if ( !req || typeof req.getTicketType !== 'function' || typeof req.getNoOfTickets !== 'function') {
@@ -45,7 +46,7 @@ class TicketService {
       throw new InvalidPurchaseException('Invalid QTY. Must be a positive integer.');
     }
 
-    const totalAmount = totals.ADULT * 25 + totals.CHILD * 15; // Infants are free
+    const totalAmount = totals.ADULT * PRICES.ADULT + totals.CHILD * PRICES.CHILD; // Infants are free
     const totalSeats = totals.ADULT + totals.CHILD; // No seat allocated to infants
     const totalTickets = totals.ADULT + totals.CHILD + totals.INFANT;
     

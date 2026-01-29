@@ -11,7 +11,9 @@
     "test:runInBand": "jest --runInBand",
     "test:watch": "jest --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "deep-freeze" : "^0.0.1"
+  },
   "devDependencies": {
     "eslint": "^9.39.2",
     "jest": "^30.2.0",
