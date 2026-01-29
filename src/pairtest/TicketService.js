@@ -16,7 +16,6 @@ class TicketService {
   }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-
     if(!Number.isInteger(accountId) || accountId <= 0){
       throw new InvalidPurchaseException('Invalid accountId. Must be a positive integer.');
     }
@@ -26,6 +25,7 @@ class TicketService {
     }
     
     const totals = { INFANT: 0, CHILD: 0, ADULT: 0}
+    const MAX_TICKETS = 25;
 
     for (const req of ticketTypeRequests) {
       if ( !req || typeof req.getTicketType !== 'function' || typeof req.getNoOfTickets !== 'function') {
@@ -41,6 +41,10 @@ class TicketService {
       totals[type] += qty;
     }
 
+    if(!Number.isInteger(totals.ADULT) || totals.ADULT <= 0 ){
+      throw new InvalidPurchaseException('Invalid QTY. Must be a positive integer.');
+    }
+
     const totalAmount = totals.ADULT * 25 + totals.CHILD * 15; // Infants are free
     const totalSeats = totals.ADULT + totals.CHILD; // No seat allocated to infants
     const totalTickets = totals.ADULT + totals.CHILD + totals.INFANT;
@@ -53,6 +57,9 @@ class TicketService {
       throw new InvalidPurchaseException('Child/Infant ticket requires atleast one Adult.');
     }
 
+    if (totalTickets > MAX_TICKETS) {
+      throw new InvalidPurchaseException(`Cannot purchase more than ${MAX_TICKETS} tickets.`);
+    }
 
     this.paymentService.makePayment(accountId, totalAmount);
     this.seatService.reserveSeat(accountId, totalSeats);

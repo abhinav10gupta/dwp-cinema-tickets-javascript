@@ -74,4 +74,40 @@ describe('TicketService - basic happy journey path', () => {
         });   
     });
 
+    test('Over 25 Tickets Total -> throws InvalidPurchaseException', () =>{
+        expect(() => {
+            service.purchaseTickets(
+                123,
+                new TicketTypeRequest('ADULT', 1),
+                new TicketTypeRequest('CHILD', 25))
+                    .toThrow(InvalidPurchaseException);
+    
+            expect(paymentSpy).not.toHaveBeenCalled();
+            expect(seatSpy).not.toHaveBeenCalled();
+        }); 
+    });
+
+    test('25 Valid Tickets', () => {
+        service.purchaseTickets(
+            123,
+            new TicketTypeRequest('ADULT', 10),
+            new TicketTypeRequest('CHILD', 15)
+        );
+
+        expect(paymentSpy).toHaveBeenCalledWith(123, 475);
+        expect(seatSpy).toHaveBeenCalledWith(123, 25);
+    });
+
+    test('Unknown ticket type or negative qualtity -> throws exception', () =>{
+        // Unknown Type 
+        expect(() =>
+            service.purchaseTickets(123, new TicketTypeRequest('STUDENT', 1)))
+        .toThrow();
+
+        // Negative QTY 
+        expect(() =>
+            service.purchaseTickets(123, new TicketTypeRequest('ADULT', -1)))
+        .toThrow();
+
+    });
 })
